@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
   created_at: timestamp("created_at").defaultNow(),
+  github_id:text('github_id')
 });
 
 // Projects Table

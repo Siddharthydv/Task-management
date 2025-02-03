@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Appbar } from "./components/Appbar";
 import { Providers } from "./utils/providers";
+import { QueryProvider } from "./utils/reactQueryProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,10 +29,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        
         <Providers>
-        <Appbar/>
-        {children}
+          <QueryProvider>
+          <div>
+            <Appbar/>
+            {children}
+          </div>
+           </QueryProvider>
         </Providers>
+       
         
       </body>
     </html>

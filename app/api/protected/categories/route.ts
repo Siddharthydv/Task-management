@@ -8,6 +8,7 @@ export async function GET() {
     try {
       // Fetch all categories
       const user_id=session.user.id
+      // const user_id="4edc4d62-ef89-4491-95c8-3048dd5bfa93"
       const allCategories = await db.select().from(categories).where(eq(categories.user_id,user_id));
       
       return new Response(JSON.stringify(allCategories), { status: 200 });

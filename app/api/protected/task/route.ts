@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const user_id=session.user.id;
     const { title , priority, due_date, category_id ,taskstatus,project_id}:Task= await req.json();
     
-    if (!title ||!priority || !due_date || !category_id) {
+    if (!title ||!priority || !due_date ) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         taskstatus:taskstatus,
         priority:priority,       
         due_date:new Date(due_date),
-        // project_id:project_id,
+        project_id:project_id,
         // category_id:category_id,
         user_id:user_id,
       }).returning();

@@ -18,7 +18,7 @@ export const nextauth={
             //returning null if user does not exists
             if(user.length==0)
                 {
-                    console.log("null")
+                    // console.log("null")
                     return null;
                 }
             //returning the user details if user exists
@@ -36,9 +36,36 @@ export const nextauth={
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        async signIn({ user, account,token }:any) {
+            if (account?.provider === "github") {
+              const existingUser = await db.select().from(users).where(eq(users.email, user.email!)).limit(1);
+              
+              if (existingUser.length === 0) {
+                // Create new user if not found
+               const newuser= await db.insert(users).values({
+                  email: user.email,
+                  name:user.name,
+                  password:"",
+                  github_id: user.id, // Store GitHub ID for future logins
+                }).returning();
+                console.log("hello",newuser)
+              
+                user.id=newuser[0].id;
+                console.log("userid",user.id);
+              }
+              else
+              {
+                  user.id=existingUser[0].id;
+              }
+            }
+           
+            return true; // Allow sign-in
+          },
         //adding id into session so that it can be used by backend server for getting user related info
-        session: ({ session, token, user }: any) => {
+        session: ({ session, token, user}: any) => {
+            
             if (session.user) {
+                console.log("tokenid",token.id);
                 session.user.id = token.sub
             }
             return session
