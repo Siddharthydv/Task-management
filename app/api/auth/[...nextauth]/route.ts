@@ -8,7 +8,7 @@ import { db } from "@/src/db";
 import { users } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 
-export const nextauth: AuthOptions = {
+export const nextauth = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -44,9 +44,7 @@ export const nextauth: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
- 
-    //@ts-expect-error: The type is incorrect due to external library limitations
-    async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
+    async signIn({ user, account }: any) {
       if (account?.provider === "github") {
         if (!user.email || !user.name) {
           console.error("User email or name is missing");
