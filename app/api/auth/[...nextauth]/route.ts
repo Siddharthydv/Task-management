@@ -1,8 +1,8 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
-import { AdapterUser } from "next-auth/adapters";
-import { Account, Session } from "next-auth";
+// import { AdapterUser } from "next-auth/adapters";
+import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt"; // ✅ Fix: Import JWT type
 import { db } from "@/src/db";
 import { users } from "@/src/db/schema";
