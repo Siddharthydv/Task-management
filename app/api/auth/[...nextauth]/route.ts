@@ -45,7 +45,7 @@ export const nextauth: AuthOptions = {
 
   callbacks: {
  
-
+    //@ts-expect-error
     async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
       if (account?.provider === "github") {
         if (!user.email || !user.name) {
