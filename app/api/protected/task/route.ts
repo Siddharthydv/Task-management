@@ -4,7 +4,7 @@ import { tasks } from "@/src/db/schema"; // Your tasks schema
 import { Task } from "./taskTypes";
 import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
-import { nextauth } from "../../auth/[...nextauth]/route";
+import { nextauth } from "../../auth/[...nextauth]/authOptions";
 
 export async function GET() {
   try {
