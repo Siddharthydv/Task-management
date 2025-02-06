@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { AdapterUser } from "next-auth/adapters";
@@ -8,7 +8,7 @@ import { db } from "@/src/db";
 import { users } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 
-export const nextauth = {
+export const nextauth:AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -44,38 +44,38 @@ export const nextauth = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
-      if (account?.provider === "github") {
-        if (!user.email || !user.name) {
-          console.error("User email or name is missing");
-          return false;
-        }
+    // async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
+    //   if (account?.provider === "github") {
+    //     if (!user.email || !user.name) {
+    //       console.error("User email or name is missing");
+    //       return false;
+    //     }
 
-        const existingUser = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, user.email))
-          .limit(1);
+    //     const existingUser = await db
+    //       .select()
+    //       .from(users)
+    //       .where(eq(users.email, user.email))
+    //       .limit(1);
 
-        if (existingUser.length === 0) {
-          const newUser = await db
-            .insert(users)
-            .values({
-              email: user.email,
-              name: user.name,
-              password: "",
-              github_id: user.id ?? "",
-            })
-            .returning();
+    //     if (existingUser.length === 0) {
+    //       const newUser = await db
+    //         .insert(users)
+    //         .values({
+    //           email: user.email,
+    //           name: user.name,
+    //           password: "",
+    //           github_id: user.id ?? "",
+    //         })
+    //         .returning();
 
-          user.id = newUser[0].id;
-        } else {
-          user.id = existingUser[0].id;
-        }
-      }
+    //       user.id = newUser[0].id;
+    //     } else {
+    //       user.id = existingUser[0].id;
+    //     }
+    //   }
 
-      return true;
-    },
+    //   return true;
+    // },
 
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
