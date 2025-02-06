@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useStore } from "../utils/zustandStore";
 import { useAddTaskMutation } from "../mutations/taskMutation"; // Import your mutation hook
-
+import { Task } from "../api/protected/task/taskTypes";
 export const TaskModal = ({
   isOpen,
   onClose,
@@ -10,14 +10,14 @@ export const TaskModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm<Task>();
   const { mutate } = useAddTaskMutation();
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const { userInfo } = useStore(); // Get user info from Zustand store
   const { projects } = userInfo; // Extract projects from userInfo
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Task) => {
     mutate(data, {
       onSuccess: () => {
         reset();
@@ -77,7 +77,7 @@ export const TaskModal = ({
             className="w-full p-2 border rounded"
           >
             <option value="">Select Project</option>
-            {projects.map((project: any) => (
+            {projects.map((project: {id:string,name:string}) => (
               <option key={project.id} value={project.id}>
                 {project.name}
               </option>

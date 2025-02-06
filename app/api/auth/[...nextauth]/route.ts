@@ -1,10 +1,14 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
+import { AdapterUser } from "next-auth/adapters";
+import { Account, User, Profile, Session } from "next-auth";
+import { JWT } from "next-auth/jwt"; // ✅ Fix: Import JWT type
 import { db } from "@/src/db";
 import { users } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
-export const nextauth = {
+
+export const nextauth: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -12,78 +16,87 @@ export const nextauth = {
         email: { label: "email", type: "text", placeholder: "" },
         password: { label: "password", type: "password", placeholder: "" },
       },
-      async authorize(credentials: any) {
-        console.log(credentials.user);
+      async authorize(credentials: Record<"email" | "password", string> | undefined) {
+        if (!credentials) return null;
+
         const user = await db
           .select()
           .from(users)
-          .where(
-            and(
-              eq(users.email, credentials.email),
-              eq(users.password, credentials.password),
-            ),
-          )
+          .where(and(eq(users.email, credentials.email), eq(users.password, credentials.password)))
           .limit(1);
-        //returning null if user does not exists
-        if (user.length == 0) {
-          // console.log("null")
+
+        if (user.length === 0) {
           return null;
         }
-        //returning the user details if user exists
+
         return {
           id: user[0].id,
           email: user[0].email,
-          name: user[0].name, // Add other fields as needed
+          name: user[0].name,
         };
       },
     }),
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID || " ",
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || " ",
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+
   callbacks: {
-    async signIn({ user, account, token }: any) {
+    // @ts-ignore
+
+    async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
       if (account?.provider === "github") {
+        if (!user.email || !user.name) {
+          console.error("User email or name is missing");
+          return false;
+        }
+
         const existingUser = await db
           .select()
           .from(users)
-          .where(eq(users.email, user.email!))
+          .where(eq(users.email, user.email))
           .limit(1);
 
         if (existingUser.length === 0) {
-          // Create new user if not found
-          const newuser = await db
+          const newUser = await db
             .insert(users)
             .values({
               email: user.email,
               name: user.name,
               password: "",
-              github_id: user.id, // Store GitHub ID for future logins
+              github_id: user.id ?? "",
             })
             .returning();
-          console.log("hello", newuser);
 
-          user.id = newuser[0].id;
-          console.log("userid", user.id);
+          user.id = newUser[0].id;
         } else {
           user.id = existingUser[0].id;
         }
       }
 
-      return true; // Allow sign-in
+      return true;
     },
-    //adding id into session so that it can be used by backend server for getting user related info
-    session: ({ session, token, user }: any) => {
+
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        console.log("tokenid", token.id);
-        session.user.id = token.sub;
+        // @ts-ignore
+
+        session.user.id= token.sub!;
       }
       return session;
     },
+
+    // async jwt({ token, user }: { token: JWT; user?: AdapterUser }) {
+    //   if (user) {
+    //     token.sub = user.id;
+    //   }
+    //   return token;
+    // },
   },
 };
+
 const handler = NextAuth(nextauth);
 
 export { handler as GET, handler as POST };

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/src/db/index"; // Your database instance
 import { tasks } from "@/src/db/schema"; // Your tasks schema
-import { Task } from "../taskTypes";
 import { eq } from "drizzle-orm";
 
 export async function GET(
@@ -33,7 +32,7 @@ export async function PUT(
   try {
     const { id } = params;
     console.log("entereed", id);
-    const { title, priority, taskstatus, due_date, category_id } =
+    const { title, priority, taskstatus, due_date } =
       await req.json();
     console.log("title", title);
 

@@ -7,8 +7,11 @@ export async function GET() {
   const session = await getServerSession(nextauth);
   try {
     // Fetch all categories
-    const user_id = session.user.id;
+    //@ts-ignore
+    const user_id = session?.user?.id;
     // const user_id="4edc4d62-ef89-4491-95c8-3048dd5bfa93"
+    if(!user_id)
+      return;
     const allCategories = await db
       .select()
       .from(categories)
@@ -27,12 +30,14 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST() {
   const session = await getServerSession(nextauth);
   try {
     // Assuming category name comes in the body
-    const user_id = session.user.id;
-    const name = session.user.name;
+    const user_id = session?.user?.id;
+    const name = session?.user?.name;
+    if(!user_id ||  !name)
+      return;
     // Insert new category into database
     const newCategory = await db
       .insert(categories)

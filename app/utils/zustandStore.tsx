@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { Task } from "../api/protected/task/taskTypes";
 
 interface UserInfo {
   username: string;
   email: string;
   id: string;
-  tasks: any[];
-  projects: any[];
-  categories: any[];
+  tasks: Task[];
+  projects: {id:string,name:string}[];
+  categories:{id:string,name:string}[];
 }
 
 interface StoreStateType {
@@ -18,9 +19,9 @@ interface StoreStateType {
     id: string;
   }) => void;
   setUserData: (data: {
-    tasks: any[];
-    projects: any[];
-    categories: any[];
+    tasks: Task[];
+    projects: {id:string,name:string}[];
+    categories: {id:string,name:string}[];
   }) => void;
   reset: () => void;
 }

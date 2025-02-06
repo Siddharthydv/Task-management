@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { nextauth } from "../../auth/[...nextauth]/route";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     // const { categoryId, status, page = 1, pageSize = 10 } = new URL(req.url).searchParams;
 
@@ -20,8 +20,9 @@ export async function GET(req: Request) {
     //   query = query.where(tasks.status.eq(status));
     // }
     const session = await getServerSession(nextauth); //implement getting user_id from jwt token
-    const user_id = session.user.id;
-
+    const user_id = session?.user.id;
+    if(!user_id)
+      return ;
     const taskList = await db
       .select()
       .from(tasks)
@@ -37,18 +38,17 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const session = await getServerSession(nextauth);
   try {
-    const user_id = session.user.id;
+    const user_id = session?.user.id;
     const {
       title,
       priority,
       description,
       due_date,
-      category_id,
       taskstatus,
       project_id,
     }: Task = await req.json();
 
-    if (!title || !priority || !due_date) {
+    if (!user_id||!title || !priority || !due_date) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },

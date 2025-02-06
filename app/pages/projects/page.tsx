@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useStore } from "@/app/utils/zustandStore";
 import { getSortedTasks } from "@/app/utils/sorting";
 import { useAddProjectMutation } from "@/app/mutations/taskMutation";
+import { Task } from "@/app/api/protected/task/taskTypes";
 
 const ProjectTaskList = () => {
   const { userInfo } = useStore();
@@ -13,10 +14,10 @@ const ProjectTaskList = () => {
   const addProjectMutation = useAddProjectMutation();
 
   const renderTasksForProject = (projectId: string) => {
-    const projectTasks = tasks.filter((task: any) => task.project_id === projectId);
+    const projectTasks = tasks.filter((task: Task) => task.project_id === projectId);
     const sortedTasks = getSortedTasks(projectTasks, selectedSortOption);
     
-    return sortedTasks.map((task: any) => (
+    return sortedTasks.map((task: Task) => (
       <tr key={task.id} className="border-b hover:bg-gray-100 transition">
         <td className="p-3">{task.title}</td>
         <td className="p-3">{task.description}</td>
@@ -72,7 +73,7 @@ const ProjectTaskList = () => {
       </div>
 
       {/* Project and Task Display */}
-      {projects.map((project: any) => (
+      {projects.map((project:{id:string,name:string}) => (
         <div key={project.id} className="mb-6 p-5 bg-gray-50 rounded-md shadow-sm">
           <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-3">
             {project.name}

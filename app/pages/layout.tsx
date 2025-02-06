@@ -15,7 +15,6 @@ export default function Layout({ children }: { children: ReactNode }) {
   } | null;
   const setUserCredentials = useStore((state) => state.setUserCredentials);
   const { setUserData } = useStore();
-  const { userInfo } = useStore();
   useEffect(() => {
     async function initializeData() {
       if (sessionData) {
@@ -31,7 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, [sessionData, setUserCredentials]);
 
   // Fetch categories
-  const { data: categories, isLoading: loadingCategories } = useQuery({
+  const { data: categories,  } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       try {
@@ -40,13 +39,13 @@ export default function Layout({ children }: { children: ReactNode }) {
         });
         return res.data;
       } catch (error) {
-        alert("error");
+        alert(error);
       }
     },
   });
 
   // // Fetch tasks
-  const { data: tasks, isLoading: loadingTasks } = useQuery({
+  const { data: tasks } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
       try {
@@ -61,7 +60,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   });
 
   // // Fetch projects
-  const { data: projects, isLoading: loadingProjects } = useQuery({
+  const { data: projects} = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
       try {

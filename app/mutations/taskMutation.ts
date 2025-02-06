@@ -12,7 +12,7 @@ export const useAddTaskMutation = () => {
       taskstatus: string;
       project_id: string;
     }) => {
-      console.log;
+      
       const res = await axios.post("/api/protected/task", taskData, {
         withCredentials: true,
       });
@@ -26,7 +26,7 @@ export const useAddTaskMutation = () => {
 
 export const useDeleteTaskMutation = () => {
   return useMutation({
-    mutationFn: async (taskId: String) => {
+    mutationFn: async (taskId: string) => {
       return await axios.delete(`/api/protected/task/${taskId}`, {
         withCredentials: true,
       });

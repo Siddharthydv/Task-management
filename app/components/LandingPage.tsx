@@ -12,7 +12,7 @@ export const LandingPage = () => {
     user: { name: string; email: string; id: string };
   } | null;
 
-  const { reset, setUserCredentials } = useStore();
+  const { reset} = useStore();
 
   return (
     <div className="flex flex-col items-center w-full text-gray-900">

@@ -17,7 +17,7 @@ export const sortByPriority = (tasks: Task[]) => {
 // };
 
 // Sorting by due date (earliest first)
-export const sortByDueDate = (tasks: any[]) => {
+export const sortByDueDate = (tasks: Task[]) => {
   return [...tasks].sort(
     (a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime(),
   );

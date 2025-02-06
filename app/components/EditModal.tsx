@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useEditTaskMutation } from "../mutations/taskMutation";
-
+import { Task } from "../api/protected/task/taskTypes";
 export const EditModal = ({
   isOpen,
   onClose,
@@ -18,7 +18,7 @@ export const EditModal = ({
     taskstatus: string;
   };
 }) => {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm<Task>();
   const { mutate } = useEditTaskMutation();
   useEffect(() => {
     if (task) {
@@ -26,7 +26,7 @@ export const EditModal = ({
     }
   }, [task, reset]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Task) => {
     mutate(data, {
       onSuccess: () => {
         reset();

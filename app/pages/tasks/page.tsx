@@ -31,7 +31,6 @@ const TaskDashboard = () => {
   }, [tasks]);
 
   const TaskCard = ({
-    id,
     title,
     type,
     task,
@@ -79,15 +78,15 @@ const TaskDashboard = () => {
   );
 
   // Filtering logic for search
-  const filterTodoTasks = (tasks: Task[]) =>
-    TodoArray?.filter((task) =>
+  const filterTodoTasks = () =>
+    TodoArray?.filter((task:Task) =>
       task.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    const filterInProgTasks = (tasks: Task[]) =>
-      InprogressArray?.filter((task) =>
+    const filterInProgTasks = () =>
+      InprogressArray?.filter((task:Task) =>
         task.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      const filterCompTasks = (tasks: Task[]) =>
+      const filterCompTasks = () =>
         CompletedArr?.filter((task) =>
           task.title.toLowerCase().includes(searchTerm.toLowerCase())
         );

@@ -1,14 +1,16 @@
 import { db } from "@/src/db";
 import { projects } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
-import { json } from "stream/consumers";
 import { getServerSession } from "next-auth";
 import { nextauth } from "../../auth/[...nextauth]/route";
 export async function GET() {
-  const session = await getServerSession(nextauth);
+  const session = await getServerSession(nextauth) 
   try {
     // Fetch all projects
-    const user_id = session?.user.id;
+    //@ts-ignore
+    const user_id = session?.user?.id;
+    if(!user_id)
+      return;
     const allProjects = await db
       .select()
       .from(projects)
@@ -33,7 +35,7 @@ export async function GET() {
 }
 export async function POST(req: Request) {
   const session = await getServerSession(nextauth);
-  try {
+  try {//@ts-ignore
     const user_id = session.user.id;
     const { name } = await req.json();
     console.log("namssssssssssse", name);
