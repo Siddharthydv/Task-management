@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 // import { AdapterUser } from "next-auth/adapters";
@@ -8,7 +8,7 @@ import { db } from "@/src/db";
 import { users } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 
-export const nextauth:AuthOptions = {
+export const nextauth:NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
