@@ -1,5 +1,4 @@
-import { pgTable, serial, text, timestamp ,uuid} from "drizzle-orm/pg-core";
-
+import { pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // Users Table
 export const users = pgTable("users", {
@@ -8,14 +7,16 @@ export const users = pgTable("users", {
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
   created_at: timestamp("created_at").defaultNow(),
-  github_id:text('github_id')
+  github_id: text("github_id"),
 });
 
 // Projects Table
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  user_id: uuid("user_id").notNull().references(() => users.id), // Each project belongs to a user
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id), // Each project belongs to a user
   created_at: timestamp("created_at").defaultNow(),
 });
 
@@ -23,7 +24,9 @@ export const projects = pgTable("projects", {
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  user_id: uuid("user_id").notNull().references(() => users.id), // Categories are user-specific
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id), // Categories are user-specific
   created_at: timestamp("created_at").defaultNow(),
 });
 
@@ -36,6 +39,8 @@ export const tasks = pgTable("tasks", {
   due_date: timestamp("due_date"), // Optional due date
   project_id: uuid("project_id").references(() => projects.id), // Task belongs to a project
   category_id: uuid("category_id").references(() => categories.id), // Task can be categorized
-  user_id: uuid("user_id").notNull().references(() => users.id), // Task belongs to a user
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id), // Task belongs to a user
   created_at: timestamp("created_at").defaultNow(),
 });
