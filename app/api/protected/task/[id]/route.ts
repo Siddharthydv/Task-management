@@ -4,7 +4,6 @@ import { tasks } from "@/src/db/schema"; // Your tasks schema
 import { eq } from "drizzle-orm";
 
 export async function GET(
-  req: Request,
   { params }: { params: { id: string } },
 ) {
   try {
@@ -38,7 +37,7 @@ export async function PUT(
 
     const updatedTask = await db
       .update(tasks)
-      .set({ title, priority, taskstatus, due_date: new Date(due_date) })
+      .set({ title,priority, taskstatus, due_date: new Date(due_date) })
       .where(eq(tasks.id, id));
 
     if (updatedTask.count === 0) {
