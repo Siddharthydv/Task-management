@@ -7,7 +7,7 @@ export async function GET() {
   const session = await getServerSession(nextauth);
   try {
     // Fetch all categories
-    //@ts-ignore
+ 
     const user_id = session?.user?.id;
     // const user_id="4edc4d62-ef89-4491-95c8-3048dd5bfa93"
     if(!user_id)

@@ -7,7 +7,7 @@ export async function GET() {
   const session = await getServerSession(nextauth) 
   try {
     // Fetch all projects
-    //@ts-ignore
+    
     const user_id = session?.user?.id;
     if(!user_id)
       return;
@@ -35,7 +35,7 @@ export async function GET() {
 }
 export async function POST(req: Request) {
   const session = await getServerSession(nextauth);
-  try {//@ts-ignore
+  try {
     const user_id = session.user.id;
     const { name } = await req.json();
     console.log("namssssssssssse", name);

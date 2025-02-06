@@ -2,7 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { AdapterUser } from "next-auth/adapters";
-import { Account, User, Profile, Session } from "next-auth";
+import { Account, Session } from "next-auth";
 import { JWT } from "next-auth/jwt"; // ✅ Fix: Import JWT type
 import { db } from "@/src/db";
 import { users } from "@/src/db/schema";
@@ -44,7 +44,7 @@ export const nextauth: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    // @ts-ignore
+ 
 
     async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
       if (account?.provider === "github") {
@@ -81,7 +81,7 @@ export const nextauth: AuthOptions = {
 
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        // @ts-ignore
+       
 
         session.user.id= token.sub!;
       }
