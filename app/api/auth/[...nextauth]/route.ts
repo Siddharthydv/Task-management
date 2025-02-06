@@ -44,7 +44,7 @@ export const nextauth = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    async signIn({ user, account }: any) {
+    async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
       if (account?.provider === "github") {
         if (!user.email || !user.name) {
           console.error("User email or name is missing");
