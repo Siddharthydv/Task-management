@@ -45,7 +45,7 @@ export const nextauth: AuthOptions = {
 
   callbacks: {
  
-    //@ts-expect-error
+    //@ts-expect-error: The type is incorrect due to external library limitations
     async signIn({ user, account }: { user: AdapterUser; account: Account | null }) {
       if (account?.provider === "github") {
         if (!user.email || !user.name) {
