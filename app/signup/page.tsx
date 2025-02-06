@@ -6,7 +6,6 @@ import { signIn } from "next-auth/react";
 import axios from "axios";
 
 const SignupPage = () => {
-  // const { setUser } = useStore();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

@@ -41,6 +41,7 @@ export async function POST(req: Request) {
     const {
       title,
       priority,
+      description,
       due_date,
       category_id,
       taskstatus,
@@ -59,6 +60,7 @@ export async function POST(req: Request) {
       .values({
         title: title,
         taskstatus: taskstatus,
+        description:description,
         priority: priority,
         due_date: new Date(due_date),
         project_id: project_id,

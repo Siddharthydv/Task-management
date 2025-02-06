@@ -33,6 +33,7 @@ export const categories = pgTable("categories", {
 // Tasks Table
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().defaultRandom(),
+  description:text("description"),
   title: text("title").notNull(),
   taskstatus: text("taskstatus").default("todo"), // "todo", "in-progress", "done"
   priority: text("priority").default("medium"), // "low", "medium", "high"

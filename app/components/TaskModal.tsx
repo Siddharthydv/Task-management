@@ -30,7 +30,7 @@ export const TaskModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30 ">
       <div className="bg-white p-6 rounded-lg w-96">
         <h2 className="text-xl font-semibold mb-4">Create New Task</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">

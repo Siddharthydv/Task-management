@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { Task } from "../api/protected/task/taskTypes";
+import { useStore } from "../utils/zustandStore";
 
-const formatDate = (date, formatString) => {
+const formatDate = (date: string | Date, formatString: string) => {
   const d = new Date(date);
   d.setUTCHours(0, 0, 0, 0); // Normalize to UTC midnight
 
@@ -9,7 +10,7 @@ const formatDate = (date, formatString) => {
     case "MMMM yyyy":
       return d.toLocaleString("default", { month: "long", year: "numeric" });
     case "yyyy-MM-dd":
-      return d.toISOString().split("T")[0]; // Always returns correct UTC date
+      return d.toISOString().split("T")[0]; // Correct UTC date
     case "d":
       return d.getUTCDate().toString();
     default:
@@ -17,28 +18,26 @@ const formatDate = (date, formatString) => {
   }
 };
 
-const isToday = (date) => {
+const isToday = (date: Date) => {
   const today = new Date();
-  const checkDate = new Date(date);
   return (
-    checkDate.getDate() === today.getDate() &&
-    checkDate.getMonth() === today.getMonth() &&
-    checkDate.getFullYear() === today.getFullYear()
+    date.getUTCDate() === today.getUTCDate() &&
+    date.getUTCMonth() === today.getUTCMonth() &&
+    date.getUTCFullYear() === today.getUTCFullYear()
   );
 };
 
 const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
+  const {userInfo:{projects}}=useStore();
+
 
   // Organize tasks by date
   const tasksByDate = useMemo(() => {
-    return tasks.reduce((acc, task) => {
+    return tasks.reduce<{ [key: string]: Task[] }>((acc, task) => {
       const dateKey = formatDate(new Date(task.due_date), "yyyy-MM-dd");
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(task);
+      acc[dateKey] = acc[dateKey] ? [...acc[dateKey], task] : [task];
       return acc;
     }, {});
   }, [tasks]);
@@ -54,10 +53,8 @@ const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
-    const days = [];
-    const totalDays = 42;
-
-    for (let i = 0; i < totalDays; i++) {
+    const days: Date[] = [];
+    for (let i = 0; i < 42; i++) {
       const day = new Date(startDate);
       day.setDate(startDate.getDate() + i);
       days.push(day);
@@ -66,7 +63,7 @@ const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
     return days;
   }, [currentDate]);
 
-  const navigateMonth = (direction) => {
+  const navigateMonth = (direction: number) => {
     setCurrentDate((prevDate) => {
       const newDate = new Date(prevDate);
       newDate.setMonth(newDate.getMonth() + direction);
@@ -74,31 +71,14 @@ const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
     });
   };
 
-  const isSameMonth = (date, referenceDate) => {
+  const isSameMonth = (date: Date, referenceDate: Date) => {
     return (
       date.getMonth() === referenceDate.getMonth() &&
       date.getFullYear() === referenceDate.getFullYear()
     );
-    const formatDate = (date, formatString) => {
-      const d = new Date(date);
-
-      switch (formatString) {
-        case "MMMM yyyy":
-          return d.toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          });
-        case "yyyy-MM-dd":
-          return d.toISOString().split("T")[0];
-        case "d":
-          return d.getDate().toString();
-        default:
-          return d.toString();
-      }
-    };
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
         return "bg-red-500";
@@ -111,12 +91,19 @@ const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
     }
   };
 
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
+  const handleTaskClick = (date: Date) => {
+    const dayTasks = tasksByDate[formatDate(date, "yyyy-MM-dd")] || [];
+    setSelectedTasks(
+      dayTasks.map((task) => ({
+        ...task,
+        project_name: projects.find((p) => p.id === task.project_id)?.name || "Unknown",
+      }))
+    );
   };
+  
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-md flex -z-30">
+    <div className="w-full max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-md flex">
       <div className="w-3/4 pr-4">
         <div className="flex justify-between items-center mb-4">
           <button
@@ -147,17 +134,12 @@ const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
             <div
               key={day.toISOString()}
               className={`
-                p-2 border rounded 
+                p-2 border rounded cursor-pointer 
                 ${isToday(day) ? "bg-blue-100" : ""}
                 ${!isSameMonth(day, currentDate) ? "text-gray-300" : ""}
                 relative
               `}
-              onClick={() => {
-                const dayTasks = tasksByDate[formatDate(day, "yyyy-MM-dd")];
-                if (dayTasks && dayTasks.length) {
-                  handleTaskClick(dayTasks[0]);
-                }
-              }}
+              onClick={() => handleTaskClick(day)}
             >
               <div className="text-sm">{formatDate(day, "d")}</div>
               {tasksByDate[formatDate(day, "yyyy-MM-dd")] && (
@@ -172,31 +154,34 @@ const TaskCalendar = ({ tasks }: { tasks: Task[] }) => {
         </div>
       </div>
 
-      {selectedTask && (
+      {selectedTasks.length > 0 && (
         <div className="w-1/4 border-l pl-4">
-          <h3 className="text-lg font-bold mb-2">{selectedTask.title}</h3>
-          <div
-            className={`h-2 w-full ${getPriorityColor(selectedTask.priority)}`}
-          ></div>
-          <p className="mt-2 text-sm text-gray-600">
-            {selectedTask.description}
-          </p>
-          <div className="mt-4">
-            <div className="flex justify-between text-sm">
-              <span>Status:</span>
-              <span className="font-semibold">{selectedTask.taskstatus}</span>
+          <h3 className="text-lg font-bold mb-2">Tasks</h3>
+          {selectedTasks.map((task) => (
+            <div key={task.id} className="mb-4">
+              <h4 className="font-semibold">{task.title}</h4>
+              <div
+                className={`h-2 w-full ${getPriorityColor(task.priority)}`}
+              ></div>
+              <p className="mt-2 text-sm text-gray-600">{task.description}</p>
+              <div className="mt-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Status:</span>
+                  <span className="font-semibold">{task.taskstatus}</span>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span>Due Date:</span>
+                  <span className="font-semibold">
+                    {formatDate(task.due_date, "yyyy-MM-dd")}
+                  </span>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span>Project:</span>
+                 {task.project_name  && <span className="font-semibold">{task.project_name}</span>}
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Due Date:</span>
-              <span className="font-semibold">
-                {formatDate(new Date(selectedTask.due_date), "yyyy-MM-dd")}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Project:</span>
-              <span className="font-semibold">{selectedTask.project_id}</span>
-            </div>
-          </div>
+          ))}
         </div>
       )}
     </div>

@@ -3,9 +3,11 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useStore } from "../utils/zustandStore";
 import { Button } from "./buttons";
+import { useRouter } from "next/navigation";
 
-export const Appbar = () => {
+export const LandingPage = () => {
   const session = useSession();
+  const router=useRouter();
   const sessionData = session?.data as {
     user: { name: string; email: string; id: string };
   } | null;
@@ -46,7 +48,7 @@ export const Appbar = () => {
         <p className="text-lg text-gray-700 mb-6">
           Manage your tasks efficiently and boost productivity with TaskManager.
         </p>
-        <Button text="Start For Free"></Button>
+        <Button text="Start For Free"  onClick={()=>router.push('/signup')}></Button>
       </section>
 
       {/* Features Section */}
@@ -77,7 +79,7 @@ export const Appbar = () => {
         <p className="text-lg mb-6">
           Join thousands of users managing tasks effortlessly.
         </p>
-        <Button text={"Get Started"} />
+        <Button text={"Get Started"} onClick={()=>router.push('/signup')}/>
       </section>
 
       {/* Footer */}

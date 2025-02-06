@@ -27,6 +27,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       }
     }
     initializeData();
+    // const { setUser } = useStore();
   }, [sessionData, setUserCredentials]);
 
   // Fetch categories
@@ -82,8 +83,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, [categories, tasks, projects, setUserData]);
 
   return (
-    <div className="p border h-screen  border-red-600">
-      <div className="flex h-full border rounded-md space-x-10   border-green-600">
+    <div className="p bborder h-screen  border-red-600">
+      <div className="flex h-full overflow-hidden border rounded-md space-x-10   border-green-600">
         <Sidebar />
         {children}
       </div>

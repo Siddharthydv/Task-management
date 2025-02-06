@@ -24,30 +24,27 @@ const Dashboard = () => {
   const { tasksdone, inProgress, completedtasks } = DashboardStat({ tasks });
   useEffect(() => {
     setUpcomingtasks(getSortedTasks(tasks, "dueDate"));
-    setNewTasks([
-      tasks[tasks.length - 1],
-      tasks[tasks.length - 2],
-      tasks[tasks.length - 2],
-    ]);
+    const lastTasks = tasks.slice(-3); // Get last 3 tasks, or fewer if less exist
+    setNewTasks(lastTasks);
+
     console.log("upcoming tasks", tasks[tasks.length - 1]);
   }, [tasks]);
   return (
-    <div className="flex flex-col flex-grow p-4 space-y-4 border border-red-600">
+    <div className="flex flex-col flex-grow p-4 space-y-4 bborder border-red-600 overflow-auto">
       {/* New Task Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white shadow rounded p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-h-1/3">
+        <div className="bg-white shadow-md  rounded p-4 max-h-1/3">
           <h2 className="text-xl font-semibold mb-2">New Task</h2>
           <ul className="space-y-2">
             {newTask?.[0] &&
               newTask?.map((task, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center p-2 bg-gray-100 rounded"
+                  className="flex justify-between items-center p-2 bg-gray-100 rounded hover:bg-orange-400"
                 >
                   <div>
-                    <p className="font-medium">{task.title}</p>
+                    <p className="font-medium">{task.title}</p> <span>{task.description}</span>
                     <p className="text-sm text-gray-600 space-x-2">
-                      {task.description}
                       <span
                         className={`font-bold ${
                           task.priority === "High"
@@ -92,7 +89,7 @@ const Dashboard = () => {
         </div>
 
         {/* Tasks Section */}
-        <div className="bg-white shadow rounded p-4">
+        <div className="bg-white shadow-md rounded p-4 max-h-1/3">
           <h2 className="text-xl font-semibold mb-2">Tasks</h2>
           <ul className="space-y-2">
             <li className="flex justify-between items-center">
@@ -115,7 +112,7 @@ const Dashboard = () => {
 
       {/* Dashboard and Upcoming Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white shadow rounded p-4">
+        <div className="bg-white shadow-md rounded p-4">
           <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -142,7 +139,7 @@ const Dashboard = () => {
               upcomingTasks?.map((task, index) => (
                 <li
                   key={index}
-                  className="grid grid-cols-3 items-center p-2 bg-gray-100 rounded gap-x-4"
+                  className="grid grid-cols-3 items-center p-2 bg-gray-100 hover:bg-orange-400 rounded gap-x-4"
                 >
                   {/* Title */}
                   <span className="truncate">{task.title}</span>
@@ -193,54 +190,10 @@ const Dashboard = () => {
 
       {/* Task Overview and Results */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* <div className="bg-white shadow rounded p-4">
-            <h2 className="text-xl font-semibold mb-2">Task Overview</h2>
-            <ul className="space-y-2">
-              <li>Dashboard: Task summary</li>
-              <li>Task management: Task progress</li>
-              <li>Task options: Task collaboration</li>
-            </ul>
-          </div> */}
         <TaskCalendar tasks={tasks} />
-
-        {/* <div className="bg-white shadow rounded p-4">
-            <h2 className="text-xl font-semibold mb-2">Task Results</h2>
-            <ul className="space-y-2">
-              {[
-                "Do you have an opportunity to grow within your team?",
-                "How would you rate overall effectiveness of the leadership team?",
-                "Do you feel the organization is prepared for future leadership needs?",
-              ].map((question, index) => (
-                <li key={index} className="mb-2">
-                  <p className="text-sm mb-1">{question}</p>
-                  <div className="w-full bg-gray-200 h-2 rounded-full">
-                    <div
-                      className="bg-teal-500 h-2 rounded-full"
-                      style={{ width: `${Math.random() * 100}%` }}
-                    ></div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div> */}
       </div>
 
-      {/* Support Section */}
-      {/* <div className="bg-white shadow rounded p-4">
-          <h2 className="text-xl font-semibold mb-2">Support</h2>
-          <ul className="space-y-2">
-            {[
-              "Help Center",
-              "Subscription",
-              "Manage team",
-              "Learning Hub",
-            ].map((item, index) => (
-              <li key={index} className="text-blue-600 hover:underline">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div> */}
+      
     </div>
   );
 };
